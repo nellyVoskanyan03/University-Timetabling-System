@@ -33,7 +33,7 @@ int main()
 	TimeSlot fri3("Friday", "13:00", "14:00");
 	TimeSlot fri4("Friday", "14:00", "15:00");
 
-	std::vector<TimeSlot> uniTS({mon1,mon2,mon3,/*tue1,tue2,tue3,tue4*//*,wed1,wed2,wed3,wed4,thr1,thr2,thr3,thr4,fri1,fri2,fri3,fri4*/});
+	std::vector<TimeSlot> uniTS({ mon1,mon2,mon3 });
 
 	Course c1("Complex analiz t.");
 	c1.preferredTimeSlots = { mon2,tue2,wed2,thr2,fri2 };
@@ -55,28 +55,22 @@ int main()
 	Course c8("algo g.");
 	c8.preferredTimeSlots = { tue3 };
 	
-
-
-
-
-	std::vector<Course> uniC({ c1,c2,c3,c4/*,c5,c6,c7,c8 */ });
+	std::vector<Course> uniC({ c1,c2,c3,c4 });
 
 	Instructor i1("Armen");
-	i1.availability = { mon1,mon2,mon3,tue1,tue2,tue3,tue4/*,wed1,wed2,wed3,wed4,thr1,thr2,thr3,thr4,fri1,fri2,fri3,fri4*/ };
-	i1.preferredCourses = { c1,c2,c3,c4,/*c5,c6,c7,c8*/ };
+	i1.availability = { mon1,mon2,mon3,tue1,tue2,tue3,tue4 };
+	i1.preferredCourses = { c1,c2,c3,c4};
 
 	Instructor i2("Karen");
-	i2.availability = { mon1,mon2,mon3,/*tue1,tue2,tue3,tue4*//*,wed1,wed2,wed3,wed4,thr1,thr2,thr3,thr4,fri1,fri2,fri3,fri4*/ };
-	i2.preferredCourses = { c1,c2,c3,c4,/*c5,c6,c7,c8*/ };
+	i2.availability = { mon1,mon2,mon3 };
+	i2.preferredCourses = { c1,c2,c3,c4 };
 
 	std::vector<Instructor> uniI({ i1,i2 });
 
 	
 	University uni;
-	//uni.schedule();
 	uni.loadState("Uni");
 	uni.schedule();
-
 
 	return 0;
 }

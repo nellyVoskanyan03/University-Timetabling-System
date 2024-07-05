@@ -19,19 +19,23 @@ University::University(std::vector<Course>& _courses, std::vector<Instructor>& _
 	instructors(_instructors), 
 	timeSlots(_timeSlots) {}
 
-void University::addCourse(Course& course) {
+void University::addCourse(Course& course)
+{
 	courses.push_back(course);
 }
 
-void University::addInstructor(Instructor& instructor) {
+void University::addInstructor(Instructor& instructor)
+{
 	instructors.push_back(instructor);
 }
 
-void University::addTimeSlot(TimeSlot& timeSlot) {
+void University::addTimeSlot(TimeSlot& timeSlot)
+{
 	timeSlots.push_back(timeSlot);
 }
 
-void University::saveState(const std::string& fileName ) {
+void University::saveState(const std::string& fileName )
+{
     json j;
     for (const auto& course : courses) {
         j["courses"].push_back(course.toJson());
@@ -49,7 +53,8 @@ void University::saveState(const std::string& fileName ) {
     file << j.dump(4);
 }
 
-void University::loadState(const std::string& filename) {
+void University::loadState(const std::string& filename) 
+{
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cout << "No such file." << std::endl;
@@ -80,7 +85,6 @@ void University::loadState(const std::string& filename) {
 
 void possibleSchedulesWithoutInstructors(std::vector<TimeSlot>& timeSlots, std::vector<Course>& courses, int currentColumn, std::vector<TimetableComponent>& curr, std::vector<std::vector<TimetableComponent>>& res)
 {
-
     if (currentColumn == timeSlots.size())
     {
         res.push_back(curr);
@@ -95,7 +99,8 @@ void possibleSchedulesWithoutInstructors(std::vector<TimeSlot>& timeSlots, std::
     }
 }
 
-bool instructorIsFree(const std::vector<Instructor>& curr, const Instructor& instructor, const std::vector<TimetableComponent>& schedule){
+bool instructorIsFree(const std::vector<Instructor>& curr, const Instructor& instructor, const std::vector<TimetableComponent>& schedule)
+{
     for (int i = 0; i < curr.size() - 1; i++)
     {
         if (curr[i] == instructor && schedule[curr.size() - 1].timeSlot == schedule[i].timeSlot)
@@ -106,7 +111,8 @@ bool instructorIsFree(const std::vector<Instructor>& curr, const Instructor& ins
     return true;
 }
 
-bool instructorIsAvailable(Instructor& instructor, TimeSlot& timeSlot) {
+bool instructorIsAvailable(Instructor& instructor, TimeSlot& timeSlot) 
+{
     return std::find(instructor.availability.begin(), instructor.availability.end(), timeSlot) != instructor.availability.end();
 }
 
@@ -134,7 +140,8 @@ void instructorCombinationsForGivenSchedule(std::vector<Instructor>& instructors
     }
 }
 
-int fitness(std::vector<TimetableComponent>& schedule) {
+int fitness(std::vector<TimetableComponent>& schedule)
+{
     int fitValue = 0;
     for (int i = 0; i < schedule.size(); i++)
     {
@@ -153,7 +160,9 @@ int fitness(std::vector<TimetableComponent>& schedule) {
     }
     return fitValue;
 }
-std::vector<TimeSlot> timeSlotsThatHaveInstructors(std::vector<TimeSlot>& timeSlots, std::vector<Instructor>& instructors) {
+
+std::vector<TimeSlot> timeSlotsThatHaveInstructors(std::vector<TimeSlot>& timeSlots, std::vector<Instructor>& instructors) 
+{
     std::vector<TimeSlot> validTimeSlots;
     
     for (int i = 0; i < instructors.size(); i++)
@@ -172,21 +181,21 @@ std::vector<TimeSlot> timeSlotsThatHaveInstructors(std::vector<TimeSlot>& timeSl
     return validTimeSlots;
 }
 
-void insertInstructersInSchedule(std::vector<TimetableComponent>& schedule, std::vector<Instructor>& instructorCombination) {
+void insertInstructersInSchedule(std::vector<TimetableComponent>& schedule, std::vector<Instructor>& instructorCombination)
+{
     for (int i = 0; i < instructorCombination.size(); i++)
     {
         schedule[i].instructor = instructorCombination [i];
     }
 }
 
-std::vector<TimetableComponent> University::schedule() {
-    
+std::vector<TimetableComponent> University::schedule() 
+{
+    auto availableTimeSlots = timeSlotsThatHaveInstructors(timeSlots, instructors);
 
-    auto availableTimeSlots = timeSlotsThatHaveInstructors(timeSlots, instructors); // O(sum of instructors' availability)
-    
     std::vector<std::vector<TimetableComponent>> possibleSchedules;
     std::vector<TimetableComponent> currSchedule;
-    possibleSchedulesWithoutInstructors(availableTimeSlots, courses, 0, currSchedule, possibleSchedules); // O(availableTimeSlots.size()^courses.size())
+    possibleSchedulesWithoutInstructors(availableTimeSlots, courses, 0, currSchedule, possibleSchedules);
 
     int maxFitness = -1;
     std::vector<TimetableComponent> bestSchedule;
@@ -195,13 +204,13 @@ std::vector<TimetableComponent> University::schedule() {
     {
         std::vector<Instructor> curr;
         std::vector<std::vector<Instructor>> instructorCombinations;
-        instructorCombinationsForGivenSchedule(instructors, curr, instructorCombinations, possibleSchedules[i]); // O( possibleSchedules[i].size()^Instructors.size())
+        instructorCombinationsForGivenSchedule(instructors, curr, instructorCombinations, possibleSchedules[i]);
 
         for (int j = 0; j < instructorCombinations.size(); j++)
         {
-            insertInstructersInSchedule(possibleSchedules[i], instructorCombinations[j]); // O( possibleSchedules[i].size())
-                
-            int fitValue = fitness(possibleSchedules[i]); // 0(possibleSchedules[i].size()*lg(courses.size())*lg(courses.size()))
+            insertInstructersInSchedule(possibleSchedules[i], instructorCombinations[j]);
+
+            int fitValue = fitness(possibleSchedules[i]);
             if (maxFitness < fitValue)
             {
                 maxFitness = fitValue;
@@ -209,96 +218,8 @@ std::vector<TimetableComponent> University::schedule() {
             }
         }
 
-        
+
     }
     timeTable = bestSchedule;
     return bestSchedule;
 }
-
-//std::vector<ScheduleComponent> University::schedule(int numOfSchedules, int numOfGenerationEvaluation, double mutationProbability) {
-//    std::vector<std::vector<ScheduleComponent>> Q = generatePopulation(numOfSchedules);
-//    int currentGeneration = 0;
-//    std::vector<ScheduleComponent> parent;
-//    std::vector<ScheduleComponent> child;
-//    while (currentGeneration <= numOfGenerationEvaluation)
-//    {
-//        parent = randomSelection(Q);
-//        child = parent;
-//        scheduleMutation(child, mutationProbability);
-//        scheduleRepair(child, mutationProbability);
-//        localOptimization(child);
-//        replace(parent, child, Q);
-//        currentGeneration++;
-//    }
-//    return best(Q);
-//}
-//
-//void University::scheduleMutation(std::vector<ScheduleComponent>& schedule, double mp) {
-//    for (int i = 0; i < courses.size() ; i++)
-//    {
-//        double m = ((double)rand() / (RAND_MAX)) + 1;
-//        if (m <= mp)
-//        {
-//            TimeSlot newTimeSlot = listOfPossibleTimeSlots(timeSlots)[0];
-//            if (allreadyAssignedToCourse(scedule, newTimeSlot))
-//            {
-//                for (int j = 0; j < listOfPossibleTimeSlots(timeSlots).size(); j++)
-//                {
-//                    if (!allreadyAssignedToCourse(scedule, timeSlots[j]))
-//                    {
-//                        newTimeSlot = timeSlots[j]; 
-//                        break;
-//                    }
-//                }
-//            }
-//            schedule[i].timeSlot = newTimeSlot;
-//        }
-//
-//        m = ((double)rand() / (RAND_MAX)) + 1;
-//        if (m <= mp)
-//        {
-//            Instructor newInstructor = listOfPossibleInstructors(schedule[i].timeSlot)[0];
-//            schedule[i].instructor = newInstructor;
-//        }
-//    }
-//}
-//
-//void University::scheduleRepair(std::vector<ScheduleComponent>& schedule, int maxRepairTimes) {
-//    std::vector<ScheduleComponent>& repairedSchedule = schedule;
-//    for (size_t i = 0; i < maxRepairTimes; i++)
-//    {
-//        if (isValid(repairedSchedule))
-//        {
-//            schedule = repairedSchedule;
-//            return;
-//        }
-//        
-//        for (int j = 0; j < courses.size(); j++)
-//        {
-//            std::vector<TimeSlot> tabuList;
-//            for (int k = 0; k < courses.size(); k++)
-//            {
-//                if (k!= j 
-//                    && repairedSchedule[j].instructor == repairedSchedule[k].instructor 
-//                    && repairedSchedule[j].timeSlot == repairedSchedule[k].timeSlot)
-//                {
-//                    tabuList.push_back(repairedSchedule[j].timeSlot);
-//                    std::vector<TimeSlot> potentialTimes = sub(AvailableSlots(repairedSchedule[j].instructor), tabuList);;
-//                    if (potentialTimes.size() != 0)
-//                    {
-//                        repairedSchedule[j].timeSlot = potentialTimes[0];
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    schedule = repairedSchedule;
-//}
-//
-//void University::localOptimization(std::vector<ScheduleComponent>& schedule) {
-//    std::vector<ScheduleComponent> optimizedSchedule = schedule;
-//    for (int i = 0; i < courses.size(); i++)
-//    {
-//
-//    }
-//}
