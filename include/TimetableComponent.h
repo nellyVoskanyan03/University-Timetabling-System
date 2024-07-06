@@ -12,8 +12,9 @@ public:
     Instructor instructor;
 
     TimetableComponent(); 
-    TimetableComponent(Course, TimeSlot);
+    TimetableComponent(Course, TimeSlot, Instructor);
     json toJson() const;
+    bool operator==(TimetableComponent const&) const;
     
 };
 

@@ -6,8 +6,8 @@
 
 TimetableComponent::TimetableComponent() {}
 
-TimetableComponent::TimetableComponent(Course c, TimeSlot t)
-        : course(c), timeSlot(t) {}
+TimetableComponent::TimetableComponent(Course c, TimeSlot t, Instructor i)
+        : course(c), timeSlot(t), instructor(i) {}
 
 json TimetableComponent::toJson() const {
       return {
@@ -16,4 +16,8 @@ json TimetableComponent::toJson() const {
            {"instructor", instructor.name}
        };
  }
+bool TimetableComponent::operator==(TimetableComponent const& t) const {
+    return course == t.course && timeSlot == t.timeSlot;
+}
+
 

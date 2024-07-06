@@ -8,7 +8,7 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-add_executable (CMakeTarget "src/UniversityTimetablingSystem.cpp" "include/UniversityTimetablingSystem.h" "src/Course.cpp" "src/Instructor.cpp" "src/University.cpp" "include/Course.h" "include/Instructor.h" "include/University.h" "include/TimeSlot.h" "src/TimeSlot.cpp" "src/TimetableComponent.cpp" "include/TimetableComponent.h")
+add_executable (CMakeTarget "src/UniversityTimetablingSystem.cpp" "include/UniversityTimetablingSystem.h" "src/Course.cpp" "src/Instructor.cpp" "src/University.cpp" "include/Course.h" "include/Instructor.h" "include/University.h" "include/TimeSlot.h" "src/TimeSlot.cpp" "src/TimetableComponent.cpp" "include/TimetableComponent.h" "include/TimeSlotInstructorPair.h")
 
 target_link_libraries(CMakeTarget PRIVATE nlohmann_json::nlohmann_json)
 

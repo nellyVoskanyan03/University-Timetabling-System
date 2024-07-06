@@ -1,4 +1,5 @@
 #include "University.h"
+
 #include <string>
 #include <vector>
 #include <fstream>
@@ -7,10 +8,9 @@
 #include "Course.h"
 #include "TimeSlot.h"
 #include "Instructor.h"
-#include"TimetableComponent.h"
-#include <cstdlib>
-#include <algorithm>  
-#include <map>
+#include "TimetableComponent.h"
+#include "TimeSlotInstructorPair.h"
+
 
 University::University() {}
 
@@ -83,65 +83,7 @@ void University::loadState(const std::string& filename)
     
 }
 
-void possibleSchedulesWithoutInstructors(std::vector<TimeSlot>& timeSlots, std::vector<Course>& courses, int currentColumn, std::vector<TimetableComponent>& curr, std::vector<std::vector<TimetableComponent>>& res)
-{
-    if (currentColumn == timeSlots.size())
-    {
-        res.push_back(curr);
-        return;
-    }
-    for (int i = 0; i < courses.size(); i++)
-    {
-        TimetableComponent sc(courses[i], timeSlots[currentColumn]);
-        curr.push_back(sc);
-        possibleSchedulesWithoutInstructors(timeSlots, courses, currentColumn + 1, curr, res);
-        curr.pop_back();
-    }
-}
-
-bool instructorIsFree(const std::vector<Instructor>& curr, const Instructor& instructor, const std::vector<TimetableComponent>& schedule)
-{
-    for (int i = 0; i < curr.size() - 1; i++)
-    {
-        if (curr[i] == instructor && schedule[curr.size() - 1].timeSlot == schedule[i].timeSlot)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool instructorIsAvailable(Instructor& instructor, TimeSlot& timeSlot) 
-{
-    return std::find(instructor.availability.begin(), instructor.availability.end(), timeSlot) != instructor.availability.end();
-}
-
-void instructorCombinationsForGivenSchedule(std::vector<Instructor>& instructors, 
-    std::vector<Instructor>& curr,
-    std::vector<std::vector<Instructor>>& res, 
-    std::vector<TimetableComponent>& schedule)
-{
-    if (curr.size() == schedule.size() )
-    {
-        res.push_back(curr);
-        return;
-    }
-    for (int i = 0; i < instructors.size(); i++)
-    {
-        curr.push_back(instructors[i]);
-
-        if (instructorIsAvailable(instructors[i], schedule[curr.size() - 1].timeSlot)
-            && instructorIsFree(curr,instructors[i],schedule))
-        {
-            instructorCombinationsForGivenSchedule(instructors, curr, res, schedule);
-        }
-        curr.pop_back();
-
-    }
-}
-
-int fitness(std::vector<TimetableComponent>& schedule)
-{
+int fitness(std::vector<TimetableComponent>& schedule) {
     int fitValue = 0;
     for (int i = 0; i < schedule.size(); i++)
     {
@@ -161,64 +103,65 @@ int fitness(std::vector<TimetableComponent>& schedule)
     return fitValue;
 }
 
-std::vector<TimeSlot> timeSlotsThatHaveInstructors(std::vector<TimeSlot>& timeSlots, std::vector<Instructor>& instructors) 
+std::vector<TimeSlotInstructorPair> makeTimeSlotInstructorPairs(std::vector<Instructor>& instructors)
 {
-    std::vector<TimeSlot> validTimeSlots;
-    
+    std::vector<TimeSlotInstructorPair>timeSlotInstructorPairs;
+   
     for (int i = 0; i < instructors.size(); i++)
     {
         for (int j = 0; j < instructors[i].availability.size(); j++)
         {
-           
-            if (std::find(timeSlots.begin(), timeSlots.end(), instructors[i].availability[j]) != timeSlots.end())
-            {
-                validTimeSlots.push_back(instructors[i].availability[j]);
-            }
-           
+            timeSlotInstructorPairs.push_back(TimeSlotInstructorPair(instructors[i].availability[j], instructors[i], false));
         }
     }
-    
-    return validTimeSlots;
+    return timeSlotInstructorPairs;
 }
 
-void insertInstructersInSchedule(std::vector<TimetableComponent>& schedule, std::vector<Instructor>& instructorCombination)
+void makePossibleSchedules(std::vector<TimeSlotInstructorPair>& timeSlotInstructorPairs,
+    std::vector<Course>& courses, 
+    std::vector<TimetableComponent>& currSchedule, 
+    std::vector<std::vector<TimetableComponent>>& possibleSchedules)
 {
-    for (int i = 0; i < instructorCombination.size(); i++)
+    if (currSchedule.size() == courses.size())
     {
-        schedule[i].instructor = instructorCombination [i];
+        possibleSchedules.push_back(currSchedule); 
+        return;
+    }
+    for (int i = 0; i < timeSlotInstructorPairs.size(); i++)
+    {
+        if (!timeSlotInstructorPairs[i].used)
+        {
+            TimetableComponent component(courses[currSchedule.size()], timeSlotInstructorPairs[i].timeSlot, timeSlotInstructorPairs[i].instructor);
+            currSchedule.push_back(component);
+            timeSlotInstructorPairs[i].used = true;
+
+            makePossibleSchedules(timeSlotInstructorPairs, courses, currSchedule, possibleSchedules);
+
+            currSchedule.pop_back();
+            timeSlotInstructorPairs[i].used = false;
+        }
     }
 }
 
-std::vector<TimetableComponent> University::schedule() 
-{
-    auto availableTimeSlots = timeSlotsThatHaveInstructors(timeSlots, instructors);
-
+std::vector<TimetableComponent> University::schedule() {
+    auto timeSlotInstructorPairs = makeTimeSlotInstructorPairs(instructors); 
+    
     std::vector<std::vector<TimetableComponent>> possibleSchedules;
     std::vector<TimetableComponent> currSchedule;
-    possibleSchedulesWithoutInstructors(availableTimeSlots, courses, 0, currSchedule, possibleSchedules);
+    
+    makePossibleSchedules(timeSlotInstructorPairs, courses, currSchedule, possibleSchedules); 
 
     int maxFitness = -1;
     std::vector<TimetableComponent> bestSchedule;
 
     for (int i = 0; i < possibleSchedules.size(); i++)
     {
-        std::vector<Instructor> curr;
-        std::vector<std::vector<Instructor>> instructorCombinations;
-        instructorCombinationsForGivenSchedule(instructors, curr, instructorCombinations, possibleSchedules[i]);
-
-        for (int j = 0; j < instructorCombinations.size(); j++)
+        int fitValue = fitness(possibleSchedules[i]); 
+        if (maxFitness < fitValue)
         {
-            insertInstructersInSchedule(possibleSchedules[i], instructorCombinations[j]);
-
-            int fitValue = fitness(possibleSchedules[i]);
-            if (maxFitness < fitValue)
-            {
-                maxFitness = fitValue;
-                bestSchedule = possibleSchedules[i];
-            }
-        }
-
-
+            maxFitness = fitValue;
+            bestSchedule = possibleSchedules[i];
+        }        
     }
     timeTable = bestSchedule;
     return bestSchedule;

@@ -68,9 +68,10 @@ int main()
 	std::vector<Instructor> uniI({ i1,i2 });
 
 	
-	University uni;
+	University uni(uniC, uniI, uniTS);
 	uni.loadState("Uni");
 	uni.schedule();
+	uni.saveState("Uni");
 
 	return 0;
 }
