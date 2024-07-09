@@ -1,0 +1,119 @@
+{
+    "courses": [
+        {
+            "courseName": "Chemistry",
+            "preferredTimeSlots": [
+                {
+                    "day": "Monday",
+                    "endTime": "11:00",
+                    "startTime": "10:00"
+                }
+            ]
+        },
+        {
+            "courseName": "Maths",
+            "preferredTimeSlots": [
+                {
+                    "day": "Monday",
+                    "endTime": "12:00",
+                    "startTime": "11:00"
+                }
+            ]
+        },
+        {
+            "courseName": "Physics",
+            "preferredTimeSlots": [
+                {
+                    "day": "Monday",
+                    "endTime": "14:00",
+                    "startTime": "13:00"
+                }
+            ]
+        }
+    ],
+    "instructors": [
+        {
+            "availability": [
+                {
+                    "day": "Monday",
+                    "endTime": "14:00",
+                    "startTime": "13:00"
+                }
+            ],
+            "name": "Albert Einstein",
+            "preferredCourses": [
+                {
+                    "courseName": "Physics",
+                    "preferredTimeSlots": [
+                        {
+                            "day": "Monday",
+                            "endTime": "14:00",
+                            "startTime": "13:00"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "availability": [
+                {
+                    "day": "Monday",
+                    "endTime": "12:00",
+                    "startTime": "11:00"
+                }
+            ],
+            "name": "Isaac Newton",
+            "preferredCourses": [
+                {
+                    "courseName": "Maths",
+                    "preferredTimeSlots": [
+                        {
+                            "day": "Monday",
+                            "endTime": "12:00",
+                            "startTime": "11:00"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "availability": [
+                {
+                    "day": "Monday",
+                    "endTime": "11:00",
+                    "startTime": "10:00"
+                }
+            ],
+            "name": "Dmitri Mendeleev",
+            "preferredCourses": [
+                {
+                    "courseName": "Chemistry",
+                    "preferredTimeSlots": [
+                        {
+                            "day": "Monday",
+                            "endTime": "11:00",
+                            "startTime": "10:00"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "timeSlots": [
+        {
+            "day": "Monday",
+            "endTime": "11:00",
+            "startTime": "10:00"
+        },
+        {
+            "day": "Monday",
+            "endTime": "12:00",
+            "startTime": "11:00"
+        },
+        {
+            "day": "Monday",
+            "endTime": "14:00",
+            "startTime": "13:00"
+        }
+    ]
+}

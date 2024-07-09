@@ -26,15 +26,6 @@ public:
 	void loadState(const std::string&);
 	std::vector<TimetableComponent> schedule();
 	
-	//std::vector<ScheduleComponent> schedule(int numOfSchedules,int numOfGenerationEvaluation, double mutationProbability);
-
-	/*std::vector<std::vector<ScheduleComponent>> generatePopulation(int);
-	std::vector<ScheduleComponent> randomSelection(std::vector<std::vector<ScheduleComponent>>&);
-	void scheduleMutation(std::vector<ScheduleComponent>&, double);
-	void scheduleRepair(std::vector<ScheduleComponent>&, int);
-	void localOptimization(std::vector<ScheduleComponent>&);
-	void replace(std::vector<ScheduleComponent>&, std::vector<ScheduleComponent>&, std::vector<std::vector<ScheduleComponent>>&);
-	std::vector<ScheduleComponent> best(std::vector<std::vector<ScheduleComponent>>&);*/
 };
 #endif 
 

@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <algorithm>
+#include <nlohmann/json.hpp>
 #include "Course.h"
 #include "TimeSlot.h"
 #include "Instructor.h"
@@ -117,7 +117,7 @@ std::vector<TimeSlotInstructorPair> makeTimeSlotInstructorPairs(std::vector<Inst
     return timeSlotInstructorPairs;
 }
 
-void makePossibleSchedules(std::vector<TimeSlotInstructorPair>& timeSlotInstructorPairs,
+void makePossibleTimetables(std::vector<TimeSlotInstructorPair>& timeSlotInstructorPairs,
     std::vector<Course>& courses, 
     std::vector<TimetableComponent>& currSchedule, 
     std::vector<std::vector<TimetableComponent>>& possibleSchedules)
@@ -135,7 +135,7 @@ void makePossibleSchedules(std::vector<TimeSlotInstructorPair>& timeSlotInstruct
             currSchedule.push_back(component);
             timeSlotInstructorPairs[i].used = true;
 
-            makePossibleSchedules(timeSlotInstructorPairs, courses, currSchedule, possibleSchedules);
+            makePossibleTimetables(timeSlotInstructorPairs, courses, currSchedule, possibleSchedules);
 
             currSchedule.pop_back();
             timeSlotInstructorPairs[i].used = false;
@@ -149,7 +149,7 @@ std::vector<TimetableComponent> University::schedule() {
     std::vector<std::vector<TimetableComponent>> possibleSchedules;
     std::vector<TimetableComponent> currSchedule;
     
-    makePossibleSchedules(timeSlotInstructorPairs, courses, currSchedule, possibleSchedules); 
+    makePossibleTimetables(timeSlotInstructorPairs, courses, currSchedule, possibleSchedules); 
 
     int maxFitness = -1;
     std::vector<TimetableComponent> bestSchedule;
