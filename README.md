@@ -1,21 +1,18 @@
 # University Timetabling System
-The University Timetabling System is designed to efficiently schedule courses for a university while assigning instructors based on their availability and preferences. The system aims to satisfy hard constraints and as many soft constraints as possible to generate an optimal timetable.
+The University Timetabling System is designed to efficiently schedule courses for a university while assigning instructors based on their availability and preferences. The system aims to satisfy hard constraints and as many soft constraints as possible to generate an optimal timetable. Unit tests are implemented using the Google Test (gtest) framework to ensure the correctness and reliability of the scheduling algorithms and constraints handling.
 
 See the constraints and more details about the assignment by [this](https://docs.google.com/document/d/1iGzcBMqbpLfBhPh7xrKGplsiqojhlKjDzB4THlBh2ho/edit?usp=sharing) link.
 
 
 ## Installation and Setup
-This is a **CMake** project.
+This is a **CMake** project. To build this project, you can simply run folowing commands
 
-To build this project, you can simply run folowing commands
  ```sh
 cmake -S . -B build
 cmake --build build
 cd build/
 ./UniversityTimetablingSystem
 ```
- - On Windows, this process will generate Visual Studio project files or MinGW makefiles.
- - On Linux, it will generate standard Makefiles.
 
 ## Algorithms used
 
