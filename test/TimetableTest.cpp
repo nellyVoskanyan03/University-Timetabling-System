@@ -84,7 +84,7 @@ TEST(UniversityTest, AddTimeSlot) {
 }
 
 
-TEST(UniversityTest, Schedule1) {
+TEST(UniversityTest, ScheduleBasic) {
     University uni;
     TimeSlot ts1("Monday", "09:00", "10:00");
     TimeSlot ts2("Tuesday", "10:00", "11:00");
@@ -122,7 +122,7 @@ TEST(UniversityTest, Schedule1) {
 }
 
 
-TEST(UniversityTest, Schedule) {
+TEST(UniversityTest, ScheduleComplex) {
     TimeSlot mon1("Monday", "10:00", "11:00");
     TimeSlot mon2("Monday", "11:00", "12:00");
     TimeSlot mon3("Monday", "13:00", "14:00");
