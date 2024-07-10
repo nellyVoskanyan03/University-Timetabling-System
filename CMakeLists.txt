@@ -34,12 +34,6 @@ add_executable(
   src/University.cpp
   src/TimeSlot.cpp
   src/TimetableComponent.cpp
-  include/Course.h
-  include/Instructor.h
-  include/University.h
-  include/TimeSlot.h
-  include/TimetableComponent.h
-  include/TimeSlotInstructorPair.h
   test/TimetableTest.cpp
 )
 
