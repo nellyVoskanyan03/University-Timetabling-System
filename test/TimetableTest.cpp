@@ -8,44 +8,6 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-
-class TimetableTest : public testing::Test {
-protected:
-	 std::string expectedState = "expectedState";
-	 std::string testState = "testState";
-	 std::string initialState = "initialState";
-
-    University RAU;
-
-	TimetableTest()
-	{
-        // create file paths
-        std::string exePath = __FILE__; // This gets the path of the current source file
-        std::string basePath = exePath.substr(0, exePath.find_last_of("/\\") + 1);
-
-        expectedState = basePath + expectedState;
-        testState = basePath + testState;
-        initialState = basePath + initialState;
-
-        // init the University
-		RAU.loadState(initialState);
-	}
-
-	json getTimetable(const std::string& filename) {
-		std::ifstream file(filename);
-
-		if (!file.is_open()) {
-			std::cout << "No such file." << std::endl;
-			return nullptr;
-		}
-
-		json j;
-		file >> j;
-		return j.at("timetable");
-	}
-
-};
-
 // Test TimeSlot class
 TEST(TimeSlotTest, CreateTimeSlot) {
     TimeSlot ts("Monday", "09:00", "10:00");
@@ -121,7 +83,8 @@ TEST(UniversityTest, AddTimeSlot) {
     EXPECT_EQ(uni.timeSlots[0].endTime, "10:00");
 }
 
-TEST(UniversityTest, Schedule) {
+
+TEST(UniversityTest, Schedule1) {
     University uni;
     TimeSlot ts1("Monday", "09:00", "10:00");
     TimeSlot ts2("Tuesday", "10:00", "11:00");
@@ -159,13 +122,71 @@ TEST(UniversityTest, Schedule) {
 }
 
 
-TEST_F(TimetableTest, Schedule) {
+TEST(UniversityTest, Schedule) {
+    TimeSlot mon1("Monday", "10:00", "11:00");
+    TimeSlot mon2("Monday", "11:00", "12:00");
+    TimeSlot mon3("Monday", "13:00", "14:00");
+    TimeSlot mon4("Monday", "14:00", "15:00");
 
-    //craete the timetable
-    RAU.schedule();
+    std::vector<TimeSlot> uniTS({ mon1,mon2,mon3 });
+    Course c1("math");
+    c1.preferredTimeSlots = { mon1,mon3 };
+    Course c2("Chemistry");
+    c2.preferredTimeSlots = { mon2 };
+    Course c3("physics");
+    c3.preferredTimeSlots = { mon1 };
+ 
 
-    //save the state of the University
-    RAU.saveState(testState);
+    std::vector<Course> uniC({ c1,c2,c3 });
+    Instructor i1("Isaac Newton");
+    i1.availability = { mon1,mon3 };
+    i1.preferredCourses = { c1,c3 };
+    Instructor i2("Dmitri Mendeleev");
+    i2.availability = { mon2,mon4 };
+    i2.preferredCourses = { c2, c3 };
+    std::vector<Instructor> uniI({ i1,i2 });
 
-    EXPECT_EQ(getTimetable(testState), getTimetable(expectedState));
+
+    University uni(uniC,uniI,uniTS);
+    uni.schedule();
+    
+
+    EXPECT_EQ(uni.timeTable.size(), 3);
+    EXPECT_EQ(uni.timeTable[0].course.courseName, "math");
+    EXPECT_EQ(uni.timeTable[0].timeSlot, mon3);
+    EXPECT_EQ(uni.timeTable[0].instructor.name, "Isaac Newton");
+    EXPECT_EQ(uni.timeTable[1].course.courseName, "Chemistry");
+    EXPECT_EQ(uni.timeTable[1].timeSlot, mon2);
+    EXPECT_EQ(uni.timeTable[1].instructor.name, "Dmitri Mendeleev");
+    EXPECT_EQ(uni.timeTable[2].course.courseName, "physics");
+    EXPECT_EQ(uni.timeTable[2].timeSlot, mon1);
+    EXPECT_EQ(uni.timeTable[2].instructor.name, "Isaac Newton");
+}
+
+TEST(UniversityTest, saveAndLoadState) {
+    TimeSlot mon1("Monday", "10:00", "11:00");
+
+    std::vector<TimeSlot> uniTS({ mon1 });
+    Course c1("math");
+    c1.preferredTimeSlots = { mon1 };
+
+    std::vector<Course> uniC({ c1 });
+    Instructor i1("Isaac Newton");
+    i1.availability = { mon1 };
+    i1.preferredCourses = { c1 };
+    std::vector<Instructor> uniI({ i1 });
+
+
+    University uni(uniC, uniI, uniTS);
+    uni.schedule();
+    uni.saveState("result");
+
+    University uni1;
+    uni1.loadState("result");
+    uni1.schedule();
+
+    EXPECT_EQ(uni.courses, uni1.courses);
+    EXPECT_EQ(uni.instructors, uni1.instructors);
+    EXPECT_EQ(uni.timeSlots, uni1.timeSlots);
+    EXPECT_EQ(uni.timeTable, uni1.timeTable);
 }
