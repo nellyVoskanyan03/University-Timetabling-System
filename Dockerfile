@@ -25,4 +25,4 @@ RUN mkdir -p build && \
     make
 
 # Command to run your application
-CMD ["./build/UniversityTimetablingSystem"]
+CMD ["./build/UniversityTimetablingSystem", "/usr/s/app/result.json"]
