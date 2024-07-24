@@ -12,13 +12,17 @@ RUN apt-get update && apt-get install -y \
     make
 
 
-RUN mkdir -p /usr/src/app/
-WORKDIR /usr/src/app/
+# Set the working directory
+WORKDIR /usr/s/app
 
-COPY . .
+# Copy the current directory contents into the container at /usr/s/app
+COPY . /usr/s/app
 
-WORKDIR /usr/src/app/script/
+# Create a build directory and run cmake, make
+RUN mkdir -p build && \
+    cd build && \
+    cmake .. && \
+    make
 
-RUN chmod +x build.sh
-
-CMD ["sh","./build.sh"]
+# Command to run your application
+CMD ["./build/UniversityTimetablingSystem"]
