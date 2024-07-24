@@ -34,6 +34,22 @@ void University::addTimeSlot(TimeSlot& timeSlot)
 	timeSlots.push_back(timeSlot);
 }
 
+const std::vector<Course> University::getCourses() {
+    return courses;
+}
+
+const std::vector<Instructor> University::getInstructors() {
+    return instructors;
+}
+
+const std::vector<TimeSlot> University::getTimeSlots() {
+    return timeSlots;
+}
+
+const std::vector<TimetableComponent>University::getTimeTable() {
+    return timeTable;
+}
+
 void University::saveState(const std::string& fileName )
 {
     json j;

@@ -9,5 +9,4 @@ add_library(UniversitySheduler
   University.h
   TimeSlot.h
   TimetableComponent.h
-  TimeSlotInstructorPair.h
 )

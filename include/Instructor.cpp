@@ -62,10 +62,6 @@ bool Instructor::operator==(Instructor const& i) const{
 	return !name.compare(i.name) && availability == i.availability && preferredCourses == i.preferredCourses;
 }
 
-bool Instructor::operator==(Instructor& i) {
-	return !name.compare(i.name) && availability == i.availability && preferredCourses == i.preferredCourses;
-}
-
 bool Instructor::operator!=(Instructor const& i) const{
 	return !(*this == i);
 }

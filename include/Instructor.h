@@ -21,7 +21,6 @@ public:
 	json toJson() const;
 	static Instructor fromJson(const json& );
 	bool operator==(Instructor const&) const;
-	bool operator==(Instructor&) ;
 	bool operator!=(Instructor const&) const;
 	
 };

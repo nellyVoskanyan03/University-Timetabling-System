@@ -31,10 +31,6 @@ bool TimeSlot::operator==(TimeSlot const& t) const{
 	return !day.compare(t.day)  && !startTime.compare(t.startTime) && !endTime.compare(t.endTime);
 }
 
-bool TimeSlot::operator==(TimeSlot& t) {
-	return !day.compare(t.day)  && !startTime.compare(t.startTime) && !endTime.compare(t.endTime);
-}
-
 bool TimeSlot::operator!=(TimeSlot const& t) const{
 	return !(*this == t);
 }

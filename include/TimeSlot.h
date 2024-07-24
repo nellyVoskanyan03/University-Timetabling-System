@@ -16,7 +16,6 @@ public:
 	json toJson() const;
 	static TimeSlot fromJson(const json& );
 	bool operator==(TimeSlot const& t) const;
-	bool operator==(TimeSlot& t);
 	bool operator!=(TimeSlot const& t) const;
 };
 

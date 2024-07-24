@@ -58,26 +58,26 @@ TEST(UniversityTest, AddCourse) {
     University uni;
     Course course("Math");
     uni.addCourse(course);
-    EXPECT_EQ(uni.courses.size(), 1);
-    EXPECT_EQ(uni.courses[0].courseName, "Math");
+    EXPECT_EQ(uni.getCourses().size(), 1);
+    EXPECT_EQ(uni.getCourses()[0].courseName, "Math");
 }
 
 TEST(UniversityTest, AddInstructor) {
     University uni;
     Instructor instructor("Dr. Smith");
     uni.addInstructor(instructor);
-    EXPECT_EQ(uni.instructors.size(), 1);
-    EXPECT_EQ(uni.instructors[0].name, "Dr. Smith");
+    EXPECT_EQ(uni.getInstructors().size(), 1);
+    EXPECT_EQ(uni.getInstructors()[0].name, "Dr. Smith");
 }
 
 TEST(UniversityTest, AddTimeSlot) {
     University uni;
     TimeSlot ts("Monday", "09:00", "10:00");
     uni.addTimeSlot(ts);
-    EXPECT_EQ(uni.timeSlots.size(), 1);
-    EXPECT_EQ(uni.timeSlots[0].day, "Monday");
-    EXPECT_EQ(uni.timeSlots[0].startTime, "09:00");
-    EXPECT_EQ(uni.timeSlots[0].endTime, "10:00");
+    EXPECT_EQ(uni.getTimeSlots().size(), 1);
+    EXPECT_EQ(uni.getTimeSlots()[0].day, "Monday");
+    EXPECT_EQ(uni.getTimeSlots()[0].startTime, "09:00");
+    EXPECT_EQ(uni.getTimeSlots()[0].endTime, "10:00");
 }
 
 
@@ -107,15 +107,15 @@ TEST(UniversityTest, ScheduleBasic) {
 
     uni.schedule();
 
-    EXPECT_EQ(uni.timeTable.size(), 2);
-    EXPECT_EQ(uni.timeTable[0].course.courseName, "Math");
-    EXPECT_EQ(uni.timeTable[0].timeSlot.day, "Monday");
-    EXPECT_EQ(uni.timeTable[0].timeSlot.startTime, "09:00");
-    EXPECT_EQ(uni.timeTable[0].instructor.name, "Dr. Smith");
-    EXPECT_EQ(uni.timeTable[1].course.courseName, "Physics");
-    EXPECT_EQ(uni.timeTable[1].timeSlot.day, "Tuesday");
-    EXPECT_EQ(uni.timeTable[1].timeSlot.startTime, "10:00");
-    EXPECT_EQ(uni.timeTable[1].instructor.name, "Dr. Johnson");
+    EXPECT_EQ(uni.getTimeTable().size(), 2);
+    EXPECT_EQ(uni.getTimeTable()[0].course.courseName, "Math");
+    EXPECT_EQ(uni.getTimeTable()[0].timeSlot.day, "Monday");
+    EXPECT_EQ(uni.getTimeTable()[0].timeSlot.startTime, "09:00");
+    EXPECT_EQ(uni.getTimeTable()[0].instructor.name, "Dr. Smith");
+    EXPECT_EQ(uni.getTimeTable()[1].course.courseName, "Physics");
+    EXPECT_EQ(uni.getTimeTable()[1].timeSlot.day, "Tuesday");
+    EXPECT_EQ(uni.getTimeTable()[1].timeSlot.startTime, "10:00");
+    EXPECT_EQ(uni.getTimeTable()[1].instructor.name, "Dr. Johnson");
 }
 
 
@@ -148,16 +148,16 @@ TEST(UniversityTest, ScheduleComplex) {
     uni.schedule();
     
 
-    EXPECT_EQ(uni.timeTable.size(), 3);
-    EXPECT_EQ(uni.timeTable[0].course.courseName, "math");
-    EXPECT_EQ(uni.timeTable[0].timeSlot, mon3);
-    EXPECT_EQ(uni.timeTable[0].instructor.name, "Isaac Newton");
-    EXPECT_EQ(uni.timeTable[1].course.courseName, "Chemistry");
-    EXPECT_EQ(uni.timeTable[1].timeSlot, mon2);
-    EXPECT_EQ(uni.timeTable[1].instructor.name, "Dmitri Mendeleev");
-    EXPECT_EQ(uni.timeTable[2].course.courseName, "physics");
-    EXPECT_EQ(uni.timeTable[2].timeSlot, mon1);
-    EXPECT_EQ(uni.timeTable[2].instructor.name, "Isaac Newton");
+    EXPECT_EQ(uni.getTimeTable().size(), 3);
+    EXPECT_EQ(uni.getTimeTable()[0].course.courseName, "math");
+    EXPECT_EQ(uni.getTimeTable()[0].timeSlot, mon3);
+    EXPECT_EQ(uni.getTimeTable()[0].instructor.name, "Isaac Newton");
+    EXPECT_EQ(uni.getTimeTable()[1].course.courseName, "Chemistry");
+    EXPECT_EQ(uni.getTimeTable()[1].timeSlot, mon2);
+    EXPECT_EQ(uni.getTimeTable()[1].instructor.name, "Dmitri Mendeleev");
+    EXPECT_EQ(uni.getTimeTable()[2].course.courseName, "physics");
+    EXPECT_EQ(uni.getTimeTable()[2].timeSlot, mon1);
+    EXPECT_EQ(uni.getTimeTable()[2].instructor.name, "Isaac Newton");
 }
 
 TEST(UniversityTest, saveAndLoadState) {
@@ -182,8 +182,8 @@ TEST(UniversityTest, saveAndLoadState) {
     uni1.loadState("result");
     uni1.schedule();
 
-    EXPECT_EQ(uni.courses, uni1.courses);
-    EXPECT_EQ(uni.instructors, uni1.instructors);
-    EXPECT_EQ(uni.timeSlots, uni1.timeSlots);
-    EXPECT_EQ(uni.timeTable, uni1.timeTable);
+    EXPECT_EQ(uni.getCourses(), uni1.getCourses());
+    EXPECT_EQ(uni.getInstructors(), uni1.getInstructors());
+    EXPECT_EQ(uni.getTimeSlots(), uni1.getTimeSlots());
+    EXPECT_EQ(uni.getTimeTable(), uni1.getTimeTable());
 }

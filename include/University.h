@@ -9,18 +9,25 @@
 #include "TimetableComponent.h"
 
 class University {
-public:
+private:
 	std::vector<Course> courses;
 	std::vector<Instructor> instructors;
 	std::vector<TimeSlot> timeSlots;
 	std::vector<TimetableComponent> timeTable;
 
+public:
+	
 	University();
 	University(std::vector<Course>&, std::vector<Instructor>&, std::vector<TimeSlot>&);
 
 	void addCourse(Course&);
 	void addInstructor(Instructor&);
 	void addTimeSlot(TimeSlot&);
+	
+	const std::vector<Course> getCourses();
+	const std::vector<Instructor> getInstructors();
+	const std::vector<TimeSlot> getTimeSlots();
+	const std::vector<TimetableComponent> getTimeTable();
 
 	void saveState(const std::string&);
 	void loadState(const std::string&);
