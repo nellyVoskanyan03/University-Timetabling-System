@@ -9,20 +9,22 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     git \
+    dos2unix \
     make
 
 
-# Set the working directory
-WORKDIR /usr/s/app
+WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /usr/s/app
-COPY . /usr/s/app
+COPY . /usr/src/app
 
-# Create a build directory and run cmake, make
+RUN dos2unix /usr/src/app/run.sh
+
+RUN chmod +x /usr/src/app/run.sh
+
 RUN mkdir -p build && \
     cd build && \
     cmake .. && \
     make
 
-# Command to run your application
-CMD ["./build/UniversityTimetablingSystem", "/usr/s/app/result.json"]
+
+CMD ["/usr/src/app/run.sh"]
