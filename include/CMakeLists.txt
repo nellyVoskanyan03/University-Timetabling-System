@@ -10,3 +10,5 @@ add_library(UniversitySheduler
   TimeSlot.h
   TimetableComponent.h
 )
+
+target_link_libraries(UniversitySheduler nlohmann_json::nlohmann_json)

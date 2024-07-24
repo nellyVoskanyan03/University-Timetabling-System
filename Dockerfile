@@ -18,5 +18,7 @@ WORKDIR /usr/src/app/
 COPY . .
 
 WORKDIR /usr/src/app/script/
+
 RUN chmod +x build.sh
+
 CMD ["sh","./build.sh"]

@@ -14,8 +14,6 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 add_subdirectory(json/json)
 
-target_link_libraries(UniversitySheduler PRIVATE nlohmann_json::nlohmann_json)
-
 # Add executable
 add_executable(
   UniversityTimetablingSystem
@@ -38,11 +36,7 @@ target_compile_definitions(gtest
     GTEST_LANG_CXX20
     GTEST_HAS_TR1_TUPLE=0
 )
-add_executable(tests)
-target_sources(tests
-  PRIVATE
+add_executable(tests
    test/TimetableTest.cpp
 )
-set_target_properties(tests PROPERTIES COMPILE_FLAGS "${cxx_strict}")
 target_link_libraries(tests PRIVATE gtest gtest_main nlohmann_json::nlohmann_json UniversitySheduler)
-
