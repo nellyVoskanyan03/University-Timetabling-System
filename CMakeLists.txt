@@ -5,48 +5,44 @@ project(UniversityTimetablingSystem)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Include directories
-include_directories(include)
+# Enable RTTI (by default it should be enabled, but let's make sure)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
 
-# Fetch nlohmann/json
-include(FetchContent)
-FetchContent_Declare(
-  json
-  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-)
-FetchContent_MakeAvailable(json)
+add_subdirectory(include)
 
-# Fetch GoogleTest
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
+add_subdirectory(json/json)
+
+target_link_libraries(UniversitySheduler PRIVATE nlohmann_json::nlohmann_json)
 
 # Add executable
 add_executable(
   UniversityTimetablingSystem
   src/UniversityTimetablingSystem.cpp
-  src/Course.cpp
-  src/Instructor.cpp
-  src/University.cpp
-  src/TimeSlot.cpp
-  src/TimetableComponent.cpp
-  test/TimetableTest.cpp
 )
 
 # Link libraries
-target_link_libraries(
-  UniversityTimetablingSystem
-  PRIVATE
-  nlohmann_json::nlohmann_json
-  GTest::gtest_main
-)
+target_link_libraries(UniversityTimetablingSystem UniversitySheduler)
 
+# Ensure RTTI is enabled for GoogleTest
+target_compile_options(UniversityTimetablingSystem PRIVATE -frtti)
 
 # Enable testing and add tests
-enable_testing()
-include(GoogleTest)
-gtest_discover_tests(UniversityTimetablingSystem)
+
+
+set (gtest_force_shared_crt ON CACHE BOOL "MSVC defaults to shared CRT" FORCE)
+add_subdirectory(test/gtest/googletest)
+target_compile_definitions(gtest
+  PUBLIC
+    GTEST_LANG_CXX20
+    GTEST_HAS_TR1_TUPLE=0
+)
+add_executable(tests)
+target_sources(tests
+  PRIVATE
+   test/TimetableTest.cpp
+)
+set_target_properties(tests PROPERTIES COMPILE_FLAGS "${cxx_strict}")
+target_link_libraries(tests PRIVATE gtest gtest_main nlohmann_json::nlohmann_json UniversitySheduler)
+

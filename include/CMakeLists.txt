@@ -1,0 +1,13 @@
+add_library(UniversitySheduler
+  Course.cpp
+  Instructor.cpp
+  University.cpp
+  TimeSlot.cpp
+  TimetableComponent.cpp
+  Course.h
+  Instructor.h
+  University.h
+  TimeSlot.h
+  TimetableComponent.h
+  TimeSlotInstructorPair.h
+)

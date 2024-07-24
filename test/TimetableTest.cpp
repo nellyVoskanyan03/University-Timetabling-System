@@ -1,8 +1,5 @@
 #include <gtest/gtest.h>
-#include "TimeSlot.h"
-#include "Instructor.h"
-#include "Course.h"
-#include "University.h"
+#include "../include/University.h"
 #include <vector>
 #include <nlohmann/json.hpp>
 #include <fstream>
