@@ -10,13 +10,68 @@ Use the following command to clone the repository and initialize its submodules 
 ```sh
 git clone --recurse-submodules https://github.com/nellyVoskanyan03/University-Timetabling-System.git
 ```
-This is a **CMake** project. To build this project, you can simply run following commands
+### Pulling submodules
+Use the following command to pull commits that include submodules (googleTest and nlohmann_json):
+```sh
+git pull --rebase --recurse-submodules
+```
+This is a **CMake** project. To build the project, run the following commands:
 
  ```sh
 cmake -S . -B build
 cmake --build build
-cd build/
-./UniversityTimetablingSystem
+```
+After building, two executables will be available:
+- `./build/tests` : Runs the tests.
+- `./build/UniversityTimetablingSystem /path/to/university_state.json`: Runs teh project. Replace `/path/to/university_state.json` with the actual path to your JSON file containing the university state. The generated timetable will be saved in the same file.
+### Example JSON File
+Here is an example of what the university_state.json file might look like:
+```json
+{
+    "courses": [
+        {
+            "courseName": "math",
+            "preferredTimeSlots": [
+                {
+                    "day": "Monday",
+                    "endTime": "11:00",
+                    "startTime": "10:00"
+                }
+            ]
+        }
+    ],
+    "instructors": [
+        {
+            "availability": [
+                {
+                    "day": "Monday",
+                    "endTime": "11:00",
+                    "startTime": "10:00"
+                }
+            ],
+            "name": "Isaac Newton",
+            "preferredCourses": [
+                {
+                    "courseName": "math",
+                    "preferredTimeSlots": [
+                        {
+                            "day": "Monday",
+                            "endTime": "11:00",
+                            "startTime": "10:00"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "timeSlots": [
+        {
+            "day": "Monday",
+            "endTime": "11:00",
+            "startTime": "10:00"
+        }
+    ]
+}
 ```
 
 ## Docker Setup
