@@ -12,10 +12,66 @@ TEST(TimeSlotTest, CreateTimeSlot) {
     EXPECT_EQ(ts.getEndTime(), "10:00");
 }
 
+TEST(TimeSlotTest, CreateJson) {
+    TimeSlot ts("Monday", "09:00", "10:00");
+    json timeSlotJson = ts.toJson();
+    EXPECT_EQ(timeSlotJson["day"], "Monday");
+    EXPECT_EQ(timeSlotJson["startTime"], "09:00");
+    EXPECT_EQ(timeSlotJson["endTime"], "10:00");
+}
+
+TEST(TimeSlotTest, ReadJson) {
+    json timeSlotJson = { {"day", "Monday"}, {"startTime", "09:00"}, {"endTime", "10:00"} };
+    TimeSlot ts = TimeSlot::fromJson(timeSlotJson);
+    EXPECT_EQ(ts.getDay(), "Monday");
+    EXPECT_EQ(ts.getStartTime(), "09:00");
+    EXPECT_EQ(ts.getEndTime(), "10:00");
+}
+
+TEST(TimeSlotTest, Equal) {
+    TimeSlot ts1("Monday", "09:00", "10:00");
+    TimeSlot ts2 = ts1;
+    EXPECT_TRUE(ts1 == ts2);
+    
+    TimeSlot ts3("Sunday", "09:00", "10:00");
+    EXPECT_FALSE(ts1 == ts3);
+    
+    TimeSlot ts4("Monday", "09:01", "10:00");
+    EXPECT_FALSE(ts1 == ts4);
+    
+    TimeSlot ts5("Monday", "09:00", "10:10");
+    EXPECT_FALSE(ts1 == ts5);
+
+}
+
+TEST(TimeSlotTest, NotEqual) {
+    TimeSlot ts1("Monday", "09:00", "10:00");
+    TimeSlot ts2 = ts1;
+    EXPECT_FALSE(ts1 != ts2);
+    
+    TimeSlot ts3("Sunday", "09:00", "10:00");
+    EXPECT_TRUE(ts1 != ts3);
+    
+    TimeSlot ts4("Monday", "09:01", "10:00");
+    EXPECT_TRUE(ts1 != ts4);
+    
+    TimeSlot ts5("Monday", "09:00", "10:10");
+    EXPECT_TRUE(ts1 != ts5);
+
+}
+
 // Test Course class
 TEST(CourseTest, CreateCourse) {
     Course course("Math");
     EXPECT_EQ(course.getCourseName(), "Math");
+    EXPECT_EQ(course.getPreferredTimeSlots().size(), 0); 
+    
+    std::vector<TimeSlot> preferredTimeSlots;
+    preferredTimeSlots.emplace_back("Monday", "09:00", "10:00");
+
+    Course course1("Math", preferredTimeSlots);
+    EXPECT_EQ(course1.getCourseName(), "Math");
+    EXPECT_EQ(course1.getPreferredTimeSlots().size(), 1);
 }
 
 TEST(CourseTest, AddPreferredTimeSlot) {
@@ -28,10 +84,53 @@ TEST(CourseTest, AddPreferredTimeSlot) {
     EXPECT_EQ(course.getPreferredTimeSlots()[0].getEndTime(), "10:00");
 }
 
+TEST(CourseTest, CreateJson) {
+    std::vector<TimeSlot> preferredTimeSlots;
+    preferredTimeSlots.emplace_back("Monday", "09:00", "10:00");
+
+    Course course("Math", preferredTimeSlots);
+    json courseJson = course.toJson();
+
+    EXPECT_EQ(courseJson["courseName"], "Math");
+    EXPECT_EQ(courseJson["preferredTimeSlots"].size(), 1);
+}
+
+TEST(CourseTest, ReadJson) {
+    json courseJson = { 
+        {"courseName", "Math"},
+        {"preferredTimeSlots", {} }
+    };
+    courseJson["preferredTimeSlots"].push_back({ {"day", "Monday"}, {"startTime", "09:00"}, {"endTime", "10:00"} });
+
+    Course course = Course::fromJson(courseJson);
+    EXPECT_EQ(course.getCourseName(), "Math");
+    EXPECT_EQ(course.getPreferredTimeSlots().size(), 1);
+    EXPECT_EQ(course.getPreferredTimeSlots()[0].getDay(), "Monday");
+    EXPECT_EQ(course.getPreferredTimeSlots()[0].getStartTime(), "09:00");
+    EXPECT_EQ(course.getPreferredTimeSlots()[0].getEndTime(), "10:00");
+}
+
+TEST(CourseTest, Equal) {
+    std::vector<TimeSlot> preferredTimeSlots;
+    preferredTimeSlots.emplace_back("Monday", "09:00", "10:00");
+
+    Course course1("Math", preferredTimeSlots);
+    Course course2 = course1;
+    EXPECT_TRUE(course1 == course2);
+
+    Course course3("Art", preferredTimeSlots);
+    EXPECT_FALSE(course1 == course3);
+    
+    Course course4("Math");
+    EXPECT_FALSE(course1 == course4);
+}
+
 // Test Instructor class
 TEST(InstructorTest, CreateInstructor) {
     Instructor instructor("Dr. Smith");
     EXPECT_EQ(instructor.getName(), "Dr. Smith");
+    EXPECT_EQ(instructor.getPreferredCourses().size(), 0);
+    EXPECT_EQ(instructor.getAvailability().size(), 0);
 }
 
 TEST(InstructorTest, AddAvailability) {
@@ -50,6 +149,77 @@ TEST(InstructorTest, AddPreferredCourse) {
     instructor.addPreferredCourse(course);
     EXPECT_EQ(instructor.getPreferredCourses().size(), 1);
     EXPECT_EQ(instructor.getPreferredCourses()[0].getCourseName(), "Math");
+}
+
+TEST(InstructorTest, CreateJson) {
+    TimeSlot ts("Monday", "09:00", "10:00");
+    Course course("Clean Code");
+
+    Instructor instructor("Uncle Bob");
+    instructor.addAvailability(ts);
+    instructor.addPreferredCourse(course);
+
+    json instructorJson = instructor.toJson();
+
+    EXPECT_EQ(instructorJson["name"], "Uncle Bob");
+    EXPECT_EQ(instructorJson["availability"].size(), 1);
+    EXPECT_EQ(instructorJson["preferredCourses"].size(), 1);
+}
+
+TEST(InstructorTest, ReadJson) {
+    json timeSlotJson = { {"day", "Monday"}, {"startTime", "09:00"}, {"endTime", "10:00"} };
+    json courseJson = {
+        {"courseName", "Clean code"},
+        {"preferredTimeSlots", {} }
+    };
+    courseJson["preferredTimeSlots"].push_back(timeSlotJson);
+
+    json instructorJson = { {"name", "Uncle Bob"}, {"availability", {}}, {"preferredCourses",{}} };
+    instructorJson["availability"].push_back(timeSlotJson);
+    instructorJson["preferredCourses"].push_back(courseJson);
+
+    Instructor instructor =  Instructor::fromJson(instructorJson);
+    EXPECT_EQ(instructor.getName(), "Uncle Bob");
+    EXPECT_EQ(instructor.getPreferredCourses().size(), 1);
+    EXPECT_EQ(instructor.getAvailability().size(), 1);
+}
+
+TEST(InstructorTest, Equal) {
+    TimeSlot ts("Monday", "09:00", "10:00");
+    Course course("Clean Code");
+
+    Instructor instructor1("Uncle Bob");
+    instructor1.addAvailability(ts);
+    instructor1.addPreferredCourse(course);
+
+    Instructor instructor2 = instructor1;
+    EXPECT_TRUE(instructor1 == instructor2);
+
+    instructor2.addAvailability(ts);
+    EXPECT_FALSE(instructor1 == instructor2);
+
+    instructor1.addAvailability(ts);
+    instructor2.addPreferredCourse(course);
+    EXPECT_FALSE(instructor1 == instructor2);
+}
+
+TEST(InstructorTest, NotEqual) {
+    TimeSlot ts("Monday", "09:00", "10:00");
+    Course course("Clean Code");
+
+    Instructor instructor1("Uncle Bob");
+    instructor1.addAvailability(ts);
+    instructor1.addPreferredCourse(course);
+
+    Instructor instructor2 = instructor1;
+    EXPECT_FALSE(instructor1 != instructor2);
+
+    instructor2.addAvailability(ts);
+    EXPECT_TRUE(instructor1 != instructor2);
+
+    instructor1.addAvailability(ts);
+    instructor2.addPreferredCourse(course);
+    EXPECT_TRUE(instructor1 != instructor2);
 }
 
 // Test University class
@@ -78,7 +248,6 @@ TEST(UniversityTest, AddTimeSlot) {
     EXPECT_EQ(uni.getTimeSlots()[0].getStartTime(), "09:00");
     EXPECT_EQ(uni.getTimeSlots()[0].getEndTime(), "10:00");
 }
-
 
 TEST(UniversityTest, ScheduleBasic) {
     University uni;
@@ -116,7 +285,6 @@ TEST(UniversityTest, ScheduleBasic) {
     EXPECT_EQ(uni.getTimeTable()[1].timeSlot.getStartTime(), "10:00");
     EXPECT_EQ(uni.getTimeTable()[1].instructor.getName(), "Dr. Johnson");
 }
-
 
 TEST(UniversityTest, ScheduleComplex) {
     TimeSlot mon1("Monday", "10:00", "11:00");
@@ -165,7 +333,7 @@ TEST(UniversityTest, ScheduleComplex) {
     EXPECT_EQ(uni.getTimeTable()[2].instructor.getName(), "Isaac Newton");
 }
 
-TEST(UniversityTest, saveAndLoadState) {
+TEST(UniversityTest, SaveAndLoadState) {
     TimeSlot mon1("Monday", "10:00", "11:00");
 
     std::vector<TimeSlot> uniTS({ mon1 });
