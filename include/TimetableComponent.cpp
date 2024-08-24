@@ -11,9 +11,9 @@ TimetableComponent::TimetableComponent(Course c, TimeSlot t, Instructor i)
 
 json TimetableComponent::toJson() const {
       return {
-           {"courseName", course.courseName},
+           {"courseName", course.getCourseName()},
            {"timeSlot", timeSlot.toJson()},
-           {"instructor", instructor.name}
+           {"instructor", instructor.getName()}
        };
  }
 bool TimetableComponent::operator==(TimetableComponent const& t) const {

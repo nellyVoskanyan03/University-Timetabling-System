@@ -1,56 +1,55 @@
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 #include "../include/University.h"
 #include <vector>
-#include <nlohmann/json.hpp>
 #include <fstream>
-#include <nlohmann/json.hpp>
 
 // Test TimeSlot class
 TEST(TimeSlotTest, CreateTimeSlot) {
     TimeSlot ts("Monday", "09:00", "10:00");
-    EXPECT_EQ(ts.day, "Monday");
-    EXPECT_EQ(ts.startTime, "09:00");
-    EXPECT_EQ(ts.endTime, "10:00");
+    EXPECT_EQ(ts.getDay(), "Monday");
+    EXPECT_EQ(ts.getStartTime(), "09:00");
+    EXPECT_EQ(ts.getEndTime(), "10:00");
 }
 
 // Test Course class
 TEST(CourseTest, CreateCourse) {
     Course course("Math");
-    EXPECT_EQ(course.courseName, "Math");
+    EXPECT_EQ(course.getCourseName(), "Math");
 }
 
 TEST(CourseTest, AddPreferredTimeSlot) {
     Course course("Math");
     TimeSlot ts("Monday", "09:00", "10:00");
     course.addPreferredTimeSlot(ts);
-    EXPECT_EQ(course.preferredTimeSlots.size(), 1);
-    EXPECT_EQ(course.preferredTimeSlots[0].day, "Monday");
-    EXPECT_EQ(course.preferredTimeSlots[0].startTime, "09:00");
-    EXPECT_EQ(course.preferredTimeSlots[0].endTime, "10:00");
+    EXPECT_EQ(course.getPreferredTimeSlots().size(), 1);
+    EXPECT_EQ(course.getPreferredTimeSlots()[0].getDay(), "Monday");
+    EXPECT_EQ(course.getPreferredTimeSlots()[0].getStartTime(), "09:00");
+    EXPECT_EQ(course.getPreferredTimeSlots()[0].getEndTime(), "10:00");
 }
 
 // Test Instructor class
 TEST(InstructorTest, CreateInstructor) {
     Instructor instructor("Dr. Smith");
-    EXPECT_EQ(instructor.name, "Dr. Smith");
+    EXPECT_EQ(instructor.getName(), "Dr. Smith");
 }
 
 TEST(InstructorTest, AddAvailability) {
     Instructor instructor("Dr. Smith");
     TimeSlot ts("Monday", "09:00", "10:00");
     instructor.addAvailability(ts);
-    EXPECT_EQ(instructor.availability.size(), 1);
-    EXPECT_EQ(instructor.availability[0].day, "Monday");
-    EXPECT_EQ(instructor.availability[0].startTime, "09:00");
-    EXPECT_EQ(instructor.availability[0].endTime, "10:00");
+    EXPECT_EQ(instructor.getAvailability().size(), 1);
+    EXPECT_EQ(instructor.getAvailability()[0].getDay(), "Monday");
+    EXPECT_EQ(instructor.getAvailability()[0].getStartTime(), "09:00");
+    EXPECT_EQ(instructor.getAvailability()[0].getEndTime(), "10:00");
 }
 
 TEST(InstructorTest, AddPreferredCourse) {
     Instructor instructor("Dr. Smith");
     Course course("Math");
     instructor.addPreferredCourse(course);
-    EXPECT_EQ(instructor.preferredCourses.size(), 1);
-    EXPECT_EQ(instructor.preferredCourses[0].courseName, "Math");
+    EXPECT_EQ(instructor.getPreferredCourses().size(), 1);
+    EXPECT_EQ(instructor.getPreferredCourses()[0].getCourseName(), "Math");
 }
 
 // Test University class
@@ -59,7 +58,7 @@ TEST(UniversityTest, AddCourse) {
     Course course("Math");
     uni.addCourse(course);
     EXPECT_EQ(uni.getCourses().size(), 1);
-    EXPECT_EQ(uni.getCourses()[0].courseName, "Math");
+    EXPECT_EQ(uni.getCourses()[0].getCourseName(), "Math");
 }
 
 TEST(UniversityTest, AddInstructor) {
@@ -67,7 +66,7 @@ TEST(UniversityTest, AddInstructor) {
     Instructor instructor("Dr. Smith");
     uni.addInstructor(instructor);
     EXPECT_EQ(uni.getInstructors().size(), 1);
-    EXPECT_EQ(uni.getInstructors()[0].name, "Dr. Smith");
+    EXPECT_EQ(uni.getInstructors()[0].getName(), "Dr. Smith");
 }
 
 TEST(UniversityTest, AddTimeSlot) {
@@ -75,9 +74,9 @@ TEST(UniversityTest, AddTimeSlot) {
     TimeSlot ts("Monday", "09:00", "10:00");
     uni.addTimeSlot(ts);
     EXPECT_EQ(uni.getTimeSlots().size(), 1);
-    EXPECT_EQ(uni.getTimeSlots()[0].day, "Monday");
-    EXPECT_EQ(uni.getTimeSlots()[0].startTime, "09:00");
-    EXPECT_EQ(uni.getTimeSlots()[0].endTime, "10:00");
+    EXPECT_EQ(uni.getTimeSlots()[0].getDay(), "Monday");
+    EXPECT_EQ(uni.getTimeSlots()[0].getStartTime(), "09:00");
+    EXPECT_EQ(uni.getTimeSlots()[0].getEndTime(), "10:00");
 }
 
 
@@ -108,14 +107,14 @@ TEST(UniversityTest, ScheduleBasic) {
     uni.schedule();
 
     EXPECT_EQ(uni.getTimeTable().size(), 2);
-    EXPECT_EQ(uni.getTimeTable()[0].course.courseName, "Math");
-    EXPECT_EQ(uni.getTimeTable()[0].timeSlot.day, "Monday");
-    EXPECT_EQ(uni.getTimeTable()[0].timeSlot.startTime, "09:00");
-    EXPECT_EQ(uni.getTimeTable()[0].instructor.name, "Dr. Smith");
-    EXPECT_EQ(uni.getTimeTable()[1].course.courseName, "Physics");
-    EXPECT_EQ(uni.getTimeTable()[1].timeSlot.day, "Tuesday");
-    EXPECT_EQ(uni.getTimeTable()[1].timeSlot.startTime, "10:00");
-    EXPECT_EQ(uni.getTimeTable()[1].instructor.name, "Dr. Johnson");
+    EXPECT_EQ(uni.getTimeTable()[0].course.getCourseName(), "Math");
+    EXPECT_EQ(uni.getTimeTable()[0].timeSlot.getDay(), "Monday");
+    EXPECT_EQ(uni.getTimeTable()[0].timeSlot.getStartTime(), "09:00");
+    EXPECT_EQ(uni.getTimeTable()[0].instructor.getName(), "Dr. Smith");
+    EXPECT_EQ(uni.getTimeTable()[1].course.getCourseName(), "Physics");
+    EXPECT_EQ(uni.getTimeTable()[1].timeSlot.getDay(), "Tuesday");
+    EXPECT_EQ(uni.getTimeTable()[1].timeSlot.getStartTime(), "10:00");
+    EXPECT_EQ(uni.getTimeTable()[1].instructor.getName(), "Dr. Johnson");
 }
 
 
@@ -127,20 +126,26 @@ TEST(UniversityTest, ScheduleComplex) {
 
     std::vector<TimeSlot> uniTS({ mon1,mon2,mon3 });
     Course c1("math");
-    c1.preferredTimeSlots = { mon1,mon3 };
+    c1.addPreferredTimeSlot(mon1);
+    c1.addPreferredTimeSlot(mon3);
+
     Course c2("Chemistry");
-    c2.preferredTimeSlots = { mon2 };
+    c2.addPreferredTimeSlot(mon2);
     Course c3("physics");
-    c3.preferredTimeSlots = { mon1 };
+    c3.addPreferredTimeSlot(mon1);
  
 
     std::vector<Course> uniC({ c1,c2,c3 });
     Instructor i1("Isaac Newton");
-    i1.availability = { mon1,mon3 };
-    i1.preferredCourses = { c1,c3 };
+    i1.addAvailability(mon1); 
+    i1.addAvailability(mon3);
+    i1.addPreferredCourse(c1);
+    i1.addPreferredCourse(c3);
     Instructor i2("Dmitri Mendeleev");
-    i2.availability = { mon2,mon4 };
-    i2.preferredCourses = { c2, c3 };
+    i2.addAvailability(mon2);
+    i2.addAvailability(mon4);
+    i2.addPreferredCourse(c2);
+    i2.addPreferredCourse(c3);
     std::vector<Instructor> uniI({ i1,i2 });
 
 
@@ -149,15 +154,15 @@ TEST(UniversityTest, ScheduleComplex) {
     
 
     EXPECT_EQ(uni.getTimeTable().size(), 3);
-    EXPECT_EQ(uni.getTimeTable()[0].course.courseName, "math");
+    EXPECT_EQ(uni.getTimeTable()[0].course.getCourseName(), "math");
     EXPECT_EQ(uni.getTimeTable()[0].timeSlot, mon3);
-    EXPECT_EQ(uni.getTimeTable()[0].instructor.name, "Isaac Newton");
-    EXPECT_EQ(uni.getTimeTable()[1].course.courseName, "Chemistry");
+    EXPECT_EQ(uni.getTimeTable()[0].instructor.getName(), "Isaac Newton");
+    EXPECT_EQ(uni.getTimeTable()[1].course.getCourseName(), "Chemistry");
     EXPECT_EQ(uni.getTimeTable()[1].timeSlot, mon2);
-    EXPECT_EQ(uni.getTimeTable()[1].instructor.name, "Dmitri Mendeleev");
-    EXPECT_EQ(uni.getTimeTable()[2].course.courseName, "physics");
+    EXPECT_EQ(uni.getTimeTable()[1].instructor.getName(), "Dmitri Mendeleev");
+    EXPECT_EQ(uni.getTimeTable()[2].course.getCourseName(), "physics");
     EXPECT_EQ(uni.getTimeTable()[2].timeSlot, mon1);
-    EXPECT_EQ(uni.getTimeTable()[2].instructor.name, "Isaac Newton");
+    EXPECT_EQ(uni.getTimeTable()[2].instructor.getName(), "Isaac Newton");
 }
 
 TEST(UniversityTest, saveAndLoadState) {
@@ -165,12 +170,12 @@ TEST(UniversityTest, saveAndLoadState) {
 
     std::vector<TimeSlot> uniTS({ mon1 });
     Course c1("math");
-    c1.preferredTimeSlots = { mon1 };
+    c1.addPreferredTimeSlot(mon1);
 
     std::vector<Course> uniC({ c1 });
     Instructor i1("Isaac Newton");
-    i1.availability = { mon1 };
-    i1.preferredCourses = { c1 };
+    i1.addAvailability(mon1);
+    i1.addPreferredCourse(c1);
     std::vector<Instructor> uniI({ i1 });
 
 

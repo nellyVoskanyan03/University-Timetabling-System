@@ -4,12 +4,25 @@
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
+
 TimeSlot::TimeSlot(): day(""), startTime(""), endTime("") {}
 
 TimeSlot::TimeSlot(std::string _day, std::string _startTime, std::string _endTime):
 	day(_day), 
 	startTime(_startTime),
 	endTime(_endTime) {}
+
+std::string TimeSlot::getDay() const {
+	return day;
+}
+
+std::string TimeSlot::getEndTime() const {
+	return endTime;
+}
+
+std::string TimeSlot::getStartTime() const {
+	return startTime;
+}
 
 void TimeSlot::displayInfo() {
 	std::cout << "Day: " 

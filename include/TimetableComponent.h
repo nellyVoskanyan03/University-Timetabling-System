@@ -13,9 +13,9 @@ public:
 
     TimetableComponent(); 
     TimetableComponent(Course, TimeSlot, Instructor);
+
     json toJson() const;
     bool operator==(TimetableComponent const&) const;
-    
 };
 
 #endif

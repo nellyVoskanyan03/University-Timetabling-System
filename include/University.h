@@ -16,7 +16,6 @@ private:
 	std::vector<TimetableComponent> timeTable;
 
 public:
-	
 	University();
 	University(std::vector<Course>&, std::vector<Instructor>&, std::vector<TimeSlot>&);
 
@@ -24,15 +23,14 @@ public:
 	void addInstructor(Instructor&);
 	void addTimeSlot(TimeSlot&);
 	
-	const std::vector<Course> getCourses();
-	const std::vector<Instructor> getInstructors();
-	const std::vector<TimeSlot> getTimeSlots();
-	const std::vector<TimetableComponent> getTimeTable();
+	std::vector<Course> getCourses() const;
+	std::vector<Instructor> getInstructors() const;
+	std::vector<TimeSlot> getTimeSlots() const;
+	std::vector<TimetableComponent> getTimeTable() const;
 
 	void saveState(const std::string&);
 	void loadState(const std::string&);
 	std::vector<TimetableComponent> schedule();
-	
 };
 #endif 
 

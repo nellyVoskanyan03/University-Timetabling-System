@@ -10,6 +10,7 @@ public:
 	Instructor instructor;
 	bool used;
 
-	TimeSlotInstructorPair(TimeSlot t, Instructor i, bool u) :timeSlot(t), instructor(i), used(u) {}
+	TimeSlotInstructorPair(TimeSlot t, Instructor i, bool u) : timeSlot(t), instructor(i), used(u) {}
 };
+
 #endif

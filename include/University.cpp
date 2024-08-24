@@ -19,39 +19,35 @@ University::University(std::vector<Course>& _courses, std::vector<Instructor>& _
 	instructors(_instructors), 
 	timeSlots(_timeSlots) {}
 
-void University::addCourse(Course& course)
-{
+void University::addCourse(Course& course) {
 	courses.push_back(course);
 }
 
-void University::addInstructor(Instructor& instructor)
-{
+void University::addInstructor(Instructor& instructor) {
 	instructors.push_back(instructor);
 }
 
-void University::addTimeSlot(TimeSlot& timeSlot)
-{
+void University::addTimeSlot(TimeSlot& timeSlot) {
 	timeSlots.push_back(timeSlot);
 }
 
-const std::vector<Course> University::getCourses() {
+std::vector<Course> University::getCourses() const {
     return courses;
 }
 
-const std::vector<Instructor> University::getInstructors() {
+std::vector<Instructor> University::getInstructors() const {
     return instructors;
 }
 
-const std::vector<TimeSlot> University::getTimeSlots() {
+std::vector<TimeSlot> University::getTimeSlots() const {
     return timeSlots;
 }
 
-const std::vector<TimetableComponent>University::getTimeTable() {
+std::vector<TimetableComponent>University::getTimeTable() const {
     return timeTable;
 }
 
-void University::saveState(const std::string& fileName )
-{
+void University::saveState(const std::string& fileName) {
     json j;
     for (const auto& course : courses) {
         j["courses"].push_back(course.toJson());
@@ -69,8 +65,7 @@ void University::saveState(const std::string& fileName )
     file << j.dump(4);
 }
 
-void University::loadState(const std::string& filename) 
-{
+void University::loadState(const std::string& filename)  {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cout << "No such file: " << filename << std::endl;
@@ -80,8 +75,7 @@ void University::loadState(const std::string& filename)
     json j;
     file >> j;  
 
-    try
-    {
+    try {
         for (const auto& courseJson : j.at("courses")) {
             courses.push_back(Course::fromJson(courseJson));
         }
@@ -92,8 +86,7 @@ void University::loadState(const std::string& filename)
             timeSlots.push_back(TimeSlot::fromJson(tsJson));
         }
     }
-    catch (const json::out_of_range& m)
-    {
+    catch (const json::out_of_range& m) {
         std::cout << "Provided file don't contain valid schedule: "<< m.what();
     }
     
@@ -101,18 +94,13 @@ void University::loadState(const std::string& filename)
 
 int fitness(std::vector<TimetableComponent>& schedule) {
     int fitValue = 0;
-    for (int i = 0; i < schedule.size(); i++)
-    {
-        if (std::find(schedule[i].instructor.preferredCourses.begin(), 
-            schedule[i].instructor.preferredCourses.end(),
-            schedule[i].course) != schedule[i].instructor.preferredCourses.end())
-        {
+    for (int i = 0; i < schedule.size(); i++) {
+        auto preferedCourses = schedule[i].instructor.getPreferredCourses();
+        if (std::find(preferedCourses.begin(), preferedCourses.end(),schedule[i].course) != preferedCourses.end()) {
             ++fitValue;
         }
-        if (std::find(schedule[i].course.preferredTimeSlots.begin(),
-            schedule[i].course.preferredTimeSlots.end(),
-            schedule[i].timeSlot) != schedule[i].course.preferredTimeSlots.end())
-        {
+        auto preferedTimeSlots = schedule[i].course.getPreferredTimeSlots();
+        if (std::find(preferedTimeSlots.begin(), preferedTimeSlots.end(), schedule[i].timeSlot) != preferedTimeSlots.end()) {
             ++fitValue;
         }
     }
@@ -123,11 +111,9 @@ std::vector<TimeSlotInstructorPair> makeTimeSlotInstructorPairs(std::vector<Inst
 {
     std::vector<TimeSlotInstructorPair>timeSlotInstructorPairs;
    
-    for (int i = 0; i < instructors.size(); i++)
-    {
-        for (int j = 0; j < instructors[i].availability.size(); j++)
-        {
-            timeSlotInstructorPairs.push_back(TimeSlotInstructorPair(instructors[i].availability[j], instructors[i], false));
+    for (int i = 0; i < instructors.size(); i++) {
+        for (int j = 0; j < instructors[i].getAvailability().size(); j++) {
+            timeSlotInstructorPairs.push_back(TimeSlotInstructorPair(instructors[i].getAvailability()[j], instructors[i], false));
         }
     }
     return timeSlotInstructorPairs;
@@ -138,15 +124,12 @@ void makePossibleTimetables(std::vector<TimeSlotInstructorPair>& timeSlotInstruc
     std::vector<TimetableComponent>& currSchedule, 
     std::vector<std::vector<TimetableComponent>>& possibleSchedules)
 {
-    if (currSchedule.size() == courses.size())
-    {
+    if (currSchedule.size() == courses.size()) {
         possibleSchedules.push_back(currSchedule); 
         return;
     }
-    for (int i = 0; i < timeSlotInstructorPairs.size(); i++)
-    {
-        if (!timeSlotInstructorPairs[i].used)
-        {
+    for (int i = 0; i < timeSlotInstructorPairs.size(); i++) {
+        if (!timeSlotInstructorPairs[i].used) {
             TimetableComponent component(courses[currSchedule.size()], timeSlotInstructorPairs[i].timeSlot, timeSlotInstructorPairs[i].instructor);
             currSchedule.push_back(component);
             timeSlotInstructorPairs[i].used = true;
@@ -170,11 +153,9 @@ std::vector<TimetableComponent> University::schedule() {
     int maxFitness = -1;
     std::vector<TimetableComponent> bestSchedule;
 
-    for (int i = 0; i < possibleSchedules.size(); i++)
-    {
+    for (int i = 0; i < possibleSchedules.size(); i++) {
         int fitValue = fitness(possibleSchedules[i]); 
-        if (maxFitness < fitValue)
-        {
+        if (maxFitness < fitValue) {
             maxFitness = fitValue;
             bestSchedule = possibleSchedules[i];
         }        

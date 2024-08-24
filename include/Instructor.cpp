@@ -7,8 +7,21 @@
 
 
 Instructor::Instructor() {}
+
 Instructor::Instructor(std::string _name):
 	name(_name), preferredCourses({}), availability({}) {}
+
+std::string Instructor::getName() const {
+	return name;
+}
+
+std::vector<TimeSlot> Instructor::getAvailability() const {
+	return availability;
+}
+
+std::vector<Course> Instructor::getPreferredCourses() const {
+	return preferredCourses;
+}
 
 void Instructor::displayInfo() {
 	std::cout << "Instructor's information\nName: "
@@ -28,15 +41,15 @@ void Instructor::displayInfo() {
 }
 
 json Instructor::toJson() const {
-	json j;
-	j["name"] = name;
+	json instructorJson;
+	instructorJson["name"] = name;
 	for (const auto& ts : availability) {
-		j["availability"].push_back(ts.toJson());
+		instructorJson["availability"].push_back(ts.toJson());
 	}
 	for (const auto& course : preferredCourses) {
-		j["preferredCourses"].push_back(course.toJson());
+		instructorJson["preferredCourses"].push_back(course.toJson());
 	}
-	return j;
+	return instructorJson;
 }
 
 void Instructor::addAvailability(const TimeSlot& timeSlot) {
@@ -59,7 +72,9 @@ Instructor Instructor::fromJson(const json& j) {
 }
 
 bool Instructor::operator==(Instructor const& i) const{
-	return !name.compare(i.name) && availability == i.availability && preferredCourses == i.preferredCourses;
+	return !name.compare(i.name) 
+		&& availability == i.availability 
+		&& preferredCourses == i.preferredCourses;
 }
 
 bool Instructor::operator!=(Instructor const& i) const{
